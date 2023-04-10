@@ -8,10 +8,15 @@ import { api } from "~/utils/api";
 const CreatePostWizard = () => {
   const { user } = useUser()
 
+  console.log(user);
+  
+
   if(!user) return null
 
-  return <div>
-    <img src={user.profileImageUrl} alt="profile img" />
+  return <div className="flex gap-3 w-full">
+    <img src={user.profileImageUrl} alt="profile img" className="h-14 w-14 rounded-full" />
+
+    <input type="text" placeholder="Write some text!!!" className="bg-transparent grow" />
   </div>
 }
 
@@ -38,7 +43,11 @@ const Home: NextPage = () => {
             {!user.isSignedIn ? <div className="flex justify-center"><SignInButton /></div> : <CreatePostWizard /> }
           </div>
           <div className="flex flex-col">
-            {[...data, ...data]?.map((post) => (<div key={post.id} className="border-b border-slate-400 p-8">{post.content}</div>))}
+            {[...data, ...data]?.map(({post, authorID}) => (
+              <div key={post.id}
+                   className="border-b border-slate-400 p-8">{post.content}</div>
+              )
+            )}
           </div>
         </div>
       </main>
