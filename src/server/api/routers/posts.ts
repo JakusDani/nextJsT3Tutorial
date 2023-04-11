@@ -4,6 +4,8 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { type } from "os";
+import { TRPCClientError } from '@trpc/client';
+import { TRPCError } from '@trpc/server';
 
 const FilterUserForClient = (user: User) => {
   return {
@@ -26,9 +28,23 @@ export const postsRouter = createTRPCRouter({
 
     console.log(users);
     
-    return posts.map((post) => ({
-      post,
-      authorID: users.find((user) => user.id == post.authorID)
-    }))
+    return posts.map((post) => {
+      const author = users.find((user) => user.id == post.authorID)
+
+      if(!author || !author.username) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Author for the post not find"
+        })
+      }      
+      
+      return { 
+        post,
+        author: {
+          ...author,
+          username: author.username,
+        },
+      }
+    })
   }),
 })
