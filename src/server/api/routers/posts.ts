@@ -1,3 +1,4 @@
+import { privateProcedure } from './../trpc';
 import type { User } from '@clerk/nextjs/dist/api'
 import clerkClient from "@clerk/clerk-sdk-node";
 import { z } from "zod";
@@ -47,4 +48,8 @@ export const postsRouter = createTRPCRouter({
       }
     })
   }),
+})
+
+create: privateProcedure.mutation(async ({ctx}) => {
+  const authorId = ctx.currentUser?.id
 })
